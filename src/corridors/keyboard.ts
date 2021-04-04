@@ -135,6 +135,7 @@ export class Keyboard implements ICameraInput<UniversalCamera> {
         this._attached = false;
         this._commands = [];
 
+        // TODO: not sure if this will work due to function binding in attachControl.
         this._element.removeEventListener('keydown', this._onKeyDown);
         this._element.removeEventListener('keyup', this._onKeyUp);
         
