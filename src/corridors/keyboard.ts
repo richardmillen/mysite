@@ -10,10 +10,19 @@ export class Keyboard implements ICameraInput<UniversalCamera> {
     _element: HTMLElement
     _attached: boolean
     _noPreventDefault: boolean
-
+    _direction: Vector3
+    angularSpeed: number
+    
     constructor(scene: Scene, camera: UniversalCamera) {
         this.camera = camera;
         this._scene = scene;
+
+        this.angularSpeed = 0.05;
+        this._direction = new Vector3(
+            Math.cos(this.angle()), 
+            0, 
+            Math.sin(this.angle())
+        );
 
         this._commands = [];
         this._attached = false;
@@ -23,6 +32,10 @@ export class Keyboard implements ICameraInput<UniversalCamera> {
 
         camera.inputs.remove(camera.inputs.attached.keyboard);
         camera.inputs.add(this);
+    }
+
+    angle(): number {
+        return this.camera.rotation.y;
     }
 
     _kbdToCommand(code: string): string {
@@ -104,8 +117,15 @@ export class Keyboard implements ICameraInput<UniversalCamera> {
         // TODO: confirm what this is doing.
         this._element.tabIndex = 1;
 
-        this._element.addEventListener('keydown', this._onKeyDown, false);
-        this._element.addEventListener('keyup', this._onKeyUp, false);
+        const unboundKD = this._onKeyDown;
+        const unboundKU = this._onKeyUp;
+
+        const _this = this;
+        const boundKD = unboundKD.bind(_this);
+        const boundKU = unboundKU.bind(_this);
+
+        this._element.addEventListener('keydown', boundKD, false);
+        this._element.addEventListener('keyup', boundKU, false);
     }
 
     detachControl() {
@@ -131,29 +151,32 @@ export class Keyboard implements ICameraInput<UniversalCamera> {
             const command = this._commands[index];
 
             console.log('command:', command);
-            console.log(this.camera.angularSpeed);
-            console.log(this.camera.direction);
+            //console.log(this.camera.angularSpeed);
+            console.log(this.camera.angularSensibility)
+            console.log(this._direction);
+
+            let speed = this.camera.speed;
             
             switch (command) {
                 case 'up':
-                    this.camera.direction.copyFromFloats(0, 0, this.camera.speed);
+                    this._direction.copyFromFloats(0, 0, speed);
                     break;
                 case 'down':
-                    this.camera.direction.copyFromFloats(0, 0, -this.camera.speed);
+                    this._direction.copyFromFloats(0, 0, -speed);
                     break;
                 case 'left':
-                    this.camera.direction.copyFromFloats(-this.camera.speed, 0, 0);
+                    this._direction.copyFromFloats(-speed, 0, 0);
                     break;
                 case 'right':
-                    this.camera.direction.copyFromFloats(this.camera.speed, 0, 0);
+                    this._direction.copyFromFloats(speed, 0, 0);
                     break;
                 case 'left-rotate':
-                    this.camera.rotation.y -= this.camera.angularSpeed;
-                    this.camera.direction.copyFromFloats(0, 0, 0);
+                    this.camera.rotation.y -= this.angularSpeed;
+                    this._direction.copyFromFloats(0, 0, 0);                
                     break;
                 case 'right-rotate':
-                    this.camera.rotation.y += this.camera.angularSpeed;
-                    this.camera.direction.copyFromFloats(0, 0, 0);
+                    this.camera.rotation.y += this.angularSpeed;
+                    this._direction.copyFromFloats(0, 0, 0);
                     break;
                 case 'crouch':
                     console.log('TODO: crouch');
@@ -167,19 +190,19 @@ export class Keyboard implements ICameraInput<UniversalCamera> {
             }
 
             if (this._scene.useRightHandedSystem) {
-                this.camera.direction.z *= -1;
+                this._direction.z *= -1;
             }
-            
+
             this.camera.getViewMatrix().invertToRef(
                 this.camera._cameraTransformMatrix
             );
-
+            
             Vector3.TransformNormalToRef(
-                this.camera.direction,
-                this.camera._cameraTransformMatrix,
+                this._direction, 
+                this.camera._cameraTransformMatrix, 
                 this.camera._transformedDirection
             );
-            
+
             this.camera.cameraDirection.addInPlace(
                 this.camera._transformedDirection
             );
