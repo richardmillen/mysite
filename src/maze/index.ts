@@ -30,13 +30,13 @@ camera.applyGravity = true;
 
 camera.ellipsoid = new Vector3(0.5, 1, 0.5);
 camera.ellipsoidOffset = new Vector3(0, 1, 0);
-camera.rotation = new Vector3(0, -Math.PI/2, 0);
+//camera.rotation = new Vector3(0, -Math.PI/2, 0);
 
 const kbd = new Keyboard(scene, camera);
 
 camera.attachControl(canvas, true);
 
-SceneLoader.ImportMeshAsync("", "/meshes/", "corridors.glb").then((result: any) => {
+SceneLoader.ImportMeshAsync("", "/meshes/", "maze.glb").then((result: any) => {
     // animationGroups geometries lights meshes particleSystems skeletons transformNodes
 
     result.meshes.forEach((mesh: Mesh) => {
