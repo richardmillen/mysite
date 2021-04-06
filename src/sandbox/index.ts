@@ -20,7 +20,9 @@ const light = new HemisphericLight('light', new Vector3(0, 1, -1), scene);
 
 const camera = new UniversalCamera('camera', new Vector3(-1, 1, 0), scene);
 camera.minZ = .0001;
-camera.speed = .25;
+camera.speed = .15;
+camera.angularSensibility *= 2;
+
 
 scene.gravity = new Vector3(0, -0.9, 0);
 scene.collisionsEnabled = true;
@@ -36,7 +38,7 @@ const kbd = new Keyboard(scene, camera);
 
 camera.attachControl(canvas, true);
 
-SceneLoader.ImportMeshAsync("", "/meshes/", "maze.glb").then((result: any) => {
+SceneLoader.ImportMeshAsync("", "/meshes/", "sandbox-v1.glb").then((result: any) => {
     // animationGroups geometries lights meshes particleSystems skeletons transformNodes
 
     result.meshes.forEach((mesh: Mesh) => {

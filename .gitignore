@@ -106,3 +106,6 @@ dist
 # Snowpack Build files
 build
 
+# Don't commit these meshes (yet!)
+www/meshes/sandbox-v1.glb
+
