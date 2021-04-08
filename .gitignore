@@ -107,5 +107,5 @@ dist
 build
 
 # Don't commit these meshes (yet!)
-www/meshes/sandbox-v1.glb
+www/meshes/test-*.glb
 
